@@ -31,20 +31,22 @@
 
 ## 2. システムアーキテクチャ
 
-### 2.1 マイクロサービス構成
+### 2.1 ハイブリッドアーキテクチャ構成
 
 ```
-┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐
-│     Frontend        │    │    Main Backend     │    │    PDF Service      │
-│     (Next.js)       │    │    (Next.js)        │    │     (FastAPI)       │
-│                     │    │                     │    │                     │
-│ • UI/UX             │◄──►│ • Server Actions    │◄──►│ • PDF読み込み       │
-│ • 状態管理          │    │ • DB操作            │    │ • PDF生成           │
-│ • 画面遷移          │    │ • 認証              │    │ • 表データ抽出      │
-│ • ユーザー操作      │    │ • ビジネスロジック  │    │ • PyMuPDF処理       │
-└─────────────────────┘    └─────────────────────┘    └─────────────────────┘
-         │                           │                           │
-         └───────────────────────────┼───────────────────────────┘
+┌─────────────────────────────────────┐    ┌─────────────────────┐
+│        Next.js Application          │    │    PDF Service      │
+│          (Frontend + Backend)       │    │     (FastAPI)       │
+│                                     │    │                     │
+│ • UI/UX (React Components)          │◄──►│ • PDF読み込み       │
+│ • Server Actions (CRUD操作)         │    │ • PDF生成           │
+│ • 認証・セッション管理              │    │ • 表データ抽出      │
+│ • ビジネスロジック                  │    │ • PyMuPDF処理       │
+│ • 直接Supabase接続                  │    │                     │
+└─────────────────┬───────────────────┘    └─────────────────────┘
+                  │                                      │
+                  │                                      │
+                  └──────────────────┬───────────────────┘
                                      │
                               ┌─────────────┐
                               │  Supabase   │
@@ -52,24 +54,32 @@
                               └─────────────┘
 ```
 
+**役割分担**:
+
+- **Next.js**: 全UI + 通常のCRUD操作 + 認証
+- **FastAPI**: PDF処理専用サービス
+- **Supabase**: データベース + 認証基盤
+
 ### 2.2 技術スタック
 
-#### **Frontend + Main Backend**
+#### **Next.js Application (Frontend + Backend)**
 
 - **Language**: TypeScript
 - **Framework**: Next.js 14+ (App Router)
-- **State Management**: React Server Components + Server Actions
+- **Architecture**: React Server Components + Server Actions
 - **UI Library**: Tailwind CSS v4
-- **Database Client**: Supabase JavaScript Client
+- **Database Client**: Supabase JavaScript Client (直接接続)
 - **Deploy**: Vercel
+- **役割**: UI/UX + 通常のCRUD操作 + 認証
 
-#### **PDF Service**
+#### **PDF Service (専用マイクロサービス)**
 
 - **Language**: Python 3.11+
 - **Framework**: FastAPI 0.104+
 - **PDF Processing**: PyMuPDF (fitz) 1.23+
 - **Database Client**: Supabase Python Client
 - **Deploy**: Railway / Render
+- **役割**: PDF処理専用（アップロード解析・生成出力のみ）
 
 #### **Database**
 
@@ -78,7 +88,7 @@
 
 ## 3. データフロー設計
 
-### 3.1 通常の CRUD 操作（最短経路）
+### 3.1 通常の CRUD 操作（Next.js → Supabase 直接アクセス）
 
 ```
 User Action → React Component → Server Action → Supabase → Response
@@ -107,7 +117,14 @@ export default async function ProjectsPage() {
 }
 ```
 
-### 3.2 PDF アップロード処理（専用 API）
+**このパターンで処理される操作**:
+
+- プロジェクト情報の取得・作成・更新・削除
+- 工程表データの参照・更新
+- ユーザー認証・セッション管理
+- 一般的なビジネスロジック
+
+### 3.2 PDF 処理（FastAPI 専用サービス経由）
 
 ```
 User Upload → Next.js Frontend → PDF Service (FastAPI) → Supabase → Response
@@ -120,6 +137,12 @@ User Upload → Next.js Frontend → PDF Service (FastAPI) → Supabase → Resp
 3. Python FastAPI が PyMuPDF で表データ抽出
 4. 抽出データを Supabase に保存
 5. 結果を Next.js に返却
+
+**このパターンで処理される操作**:
+
+- PDFファイルのアップロード・解析
+- 工程表PDFの生成・出力
+- PDF関連の専門処理
 
 ## 4. データベース設計
 
@@ -382,18 +405,20 @@ def extract_schedule_data(doc: fitz.Document) -> list:
     return schedule_items
 ```
 
-#### 6.2.1 RESTful設計
+#### 6.2.1 PDF Service API設計
+
+PDF処理専用のAPIエンドポイント設計（データCRUD操作はNext.js Server Actionsで直接Supabaseアクセス）:
 
 ```python
-# リソース指向のURL設計
-GET /api/v1/projects           # プロジェクト一覧取得
-POST /api/v1/projects          # プロジェクト新規作成
-GET /api/v1/projects/{id}      # プロジェクト詳細取得
-PUT /api/v1/projects/{id}      # プロジェクト更新
-DELETE /api/v1/projects/{id}   # プロジェクト削除
+# PDF処理専用API（FastAPI）
+POST /upload-pdf                 # PDFアップロード・解析
+POST /export-pdf/{schedule_id}   # PDF生成・出力
+GET /health                      # ヘルスチェック
 
-POST /api/v1/projects/{id}/schedules  # 工程表アップロード
-GET /api/v1/projects/{id}/pdf         # PDF出力
+# 通常のデータ操作（Next.js Server Actions経由でSupabase直接アクセス）
+# - プロジェクト一覧取得・作成・更新・削除
+# - 工程表データの参照・更新
+# - ユーザー管理・認証
 ```
 
 ## 7. コンポーネント設計
@@ -1008,7 +1033,7 @@ pip freeze > requirements.txt
 
 **作成日**: 2025年8月2日  
 **作成者**: Jukiya  
-**バージョン**: 1.0  
+**バージョン**: 2.1  
 **サービス名**: HomeSync
 
 このルールファイルを参照して、一貫性のある高品質な開発を行ってください。
