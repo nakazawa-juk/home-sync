@@ -1,0 +1,20 @@
+{
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": ["github"],
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npm run format"
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "allow": ["mcp__serena__write_memory"]
+  }
+}
