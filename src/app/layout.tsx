@@ -2,9 +2,9 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Next.js Dev Template',
+  title: 'HomeSync - 住宅建設工程管理',
   description:
-    'A template for Next.js development with TypeScript and Tailwind CSS',
+    '注文住宅業界向け工程表管理システム - 工程表の更新忘れゼロ、取引先との認識ズレ解消',
 };
 
 export default function RootLayout({
