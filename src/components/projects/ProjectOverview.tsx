@@ -1,15 +1,48 @@
-import { Project, ProjectSchedule } from '@/lib/types';
+import {
+  Project,
+  ProjectSchedule,
+  ScheduleItem,
+  ScheduleStatus,
+} from '@/lib/types';
 import { formatDate, calculateProgress } from '@/lib/utils';
 import { Badge } from '@/components/ui';
 import { Building, MapPin, Calendar, TrendingUp } from 'lucide-react';
 
 interface ProjectOverviewProps {
   project: Project;
-  schedule?: ProjectSchedule;
+  schedule?: ProjectSchedule & { schedule_items: ScheduleItem[] };
+}
+
+// プロジェクトの全体ステータスを工程表から計算
+function getProjectStatus(
+  schedule?: ProjectSchedule & { schedule_items: ScheduleItem[] },
+): ScheduleStatus {
+  if (!schedule?.schedule_items || schedule.schedule_items.length === 0) {
+    return '未着手';
+  }
+
+  const items = schedule.schedule_items;
+  const statusCounts = items.reduce(
+    (acc: Record<ScheduleStatus, number>, item: ScheduleItem) => {
+      const status = item.status || '未着手';
+      acc[status] = (acc[status] || 0) + 1;
+      return acc;
+    },
+    {} as Record<ScheduleStatus, number>,
+  );
+
+  // 優先順位: 遅延 > 中断 > 進行中 > 完了 > 未着手
+  if (statusCounts['遅延'] > 0) return '遅延';
+  if (statusCounts['中断'] > 0) return '中断';
+  if (statusCounts['進行中'] > 0) return '進行中';
+  if (statusCounts['完了'] === items.length) return '完了';
+
+  return '進行中'; // 一部完了している場合
 }
 
 export function ProjectOverview({ project, schedule }: ProjectOverviewProps) {
   const progress = schedule ? calculateProgress(schedule.schedule_items) : 0;
+  const projectStatus = getProjectStatus(schedule);
 
   return (
     <div className="space-y-6">
@@ -55,11 +88,7 @@ export function ProjectOverview({ project, schedule }: ProjectOverviewProps) {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-500">ステータス</p>
-              <Badge
-                variant="status"
-                status={project.status}
-                className="mt-2"
-              />
+              <Badge variant="status" status={projectStatus} className="mt-2" />
             </div>
           </div>
         </div>

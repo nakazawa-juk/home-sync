@@ -1,61 +1,90 @@
-import { Project, ProjectSchedule, ScheduleItem } from './types';
+import {
+  Project,
+  ProjectSchedule,
+  ScheduleItem,
+  ScheduleStatus,
+} from './types';
 
 export const mockProjects: Project[] = [
   {
     id: '1',
-    project_number: '2024-001',
+    project_number: 2024001,
     project_name: '田中様邸新築工事',
     construction_location: '東京都世田谷区砧1-1-1',
     construction_company: '東建設株式会社',
-    status: '進行中',
     created_at: '2024-01-15T00:00:00Z',
     updated_at: '2024-07-20T00:00:00Z',
   },
   {
     id: '2',
-    project_number: '2024-002',
+    project_number: 2024002,
     project_name: '佐藤様邸新築工事',
     construction_location: '神奈川県横浜市青葉区美しが丘2-2-2',
     construction_company: '西建設株式会社',
-    status: '完了',
     created_at: '2024-02-01T00:00:00Z',
     updated_at: '2024-06-30T00:00:00Z',
   },
   {
     id: '3',
-    project_number: '2024-003',
+    project_number: 2024003,
     project_name: '鈴木様邸新築工事',
     construction_location: '千葉県船橋市本町3-3-3',
     construction_company: '南建設株式会社',
-    status: '遅延',
     created_at: '2024-03-10T00:00:00Z',
     updated_at: '2024-07-15T00:00:00Z',
   },
   {
     id: '4',
-    project_number: '2024-004',
+    project_number: 2024004,
     project_name: '高橋様邸新築工事',
     construction_location: '埼玉県さいたま市浦和区高砂4-4-4',
     construction_company: '北建設株式会社',
-    status: '未着手',
     created_at: '2024-06-01T00:00:00Z',
     updated_at: '2024-06-01T00:00:00Z',
   },
   {
     id: '5',
-    project_number: '2024-005',
+    project_number: 2024005,
     project_name: '中村様邸新築工事',
     construction_location: '東京都杉並区荻窪5-5-5',
     construction_company: '東建設株式会社',
-    status: '中断',
     created_at: '2024-04-20T00:00:00Z',
     updated_at: '2024-05-15T00:00:00Z',
+  },
+];
+
+// 後方互換性のため、旧形式のProject型（status付き）
+interface LegacyProject extends Project {
+  status: ScheduleStatus;
+}
+
+export const mockLegacyProjects: LegacyProject[] = [
+  {
+    ...mockProjects[0],
+    status: '進行中',
+  },
+  {
+    ...mockProjects[1],
+    status: '完了',
+  },
+  {
+    ...mockProjects[2],
+    status: '遅延',
+  },
+  {
+    ...mockProjects[3],
+    status: '未着手',
+  },
+  {
+    ...mockProjects[4],
+    status: '中断',
   },
 ];
 
 export const mockScheduleItems: ScheduleItem[] = [
   {
     id: '1',
+    schedule_id: 'schedule-1',
     process_name: '地盤調査・地縄張り',
     planned_start_date: '2024-01-20',
     planned_end_date: '2024-01-25',
@@ -68,6 +97,7 @@ export const mockScheduleItems: ScheduleItem[] = [
   },
   {
     id: '2',
+    schedule_id: 'schedule-1',
     process_name: '基礎工事',
     planned_start_date: '2024-01-30',
     planned_end_date: '2024-02-15',
@@ -80,6 +110,7 @@ export const mockScheduleItems: ScheduleItem[] = [
   },
   {
     id: '3',
+    schedule_id: 'schedule-1',
     process_name: '上棟',
     planned_start_date: '2024-02-20',
     planned_end_date: '2024-02-25',
@@ -92,6 +123,7 @@ export const mockScheduleItems: ScheduleItem[] = [
   },
   {
     id: '4',
+    schedule_id: 'schedule-1',
     process_name: '屋根工事',
     planned_start_date: '2024-03-01',
     planned_end_date: '2024-03-15',
@@ -104,6 +136,7 @@ export const mockScheduleItems: ScheduleItem[] = [
   },
   {
     id: '5',
+    schedule_id: 'schedule-1',
     process_name: '外壁工事',
     planned_start_date: '2024-03-20',
     planned_end_date: '2024-04-10',
@@ -115,6 +148,7 @@ export const mockScheduleItems: ScheduleItem[] = [
   },
   {
     id: '6',
+    schedule_id: 'schedule-1',
     process_name: '内装工事',
     planned_start_date: '2024-04-15',
     planned_end_date: '2024-05-30',
@@ -125,6 +159,7 @@ export const mockScheduleItems: ScheduleItem[] = [
   },
   {
     id: '7',
+    schedule_id: 'schedule-1',
     process_name: '竣工検査',
     planned_start_date: '2024-06-01',
     planned_end_date: '2024-06-05',
@@ -135,12 +170,14 @@ export const mockScheduleItems: ScheduleItem[] = [
   },
 ];
 
-export const mockProjectSchedule: ProjectSchedule = {
+export const mockProjectSchedule: ProjectSchedule & {
+  schedule_items: ScheduleItem[];
+} = {
   id: 'schedule-1',
   project_id: '1',
   version: 1,
-  schedule_items: mockScheduleItems,
   created_at: '2024-01-15T00:00:00Z',
+  schedule_items: mockScheduleItems,
 };
 
 export const getProjectById = (id: string): Project | undefined => {

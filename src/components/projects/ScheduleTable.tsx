@@ -1,4 +1,4 @@
-import { ProjectSchedule } from '@/lib/types';
+import { ProjectSchedule, ScheduleItem } from '@/lib/types';
 import { formatDate } from '@/lib/utils';
 import {
   Table,
@@ -12,7 +12,7 @@ import {
 import { Calendar, User, FileText } from 'lucide-react';
 
 interface ScheduleTableProps {
-  schedule: ProjectSchedule;
+  schedule: ProjectSchedule & { schedule_items: ScheduleItem[] };
 }
 
 export function ScheduleTable({ schedule }: ScheduleTableProps) {

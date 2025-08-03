@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { Layout } from '@/components/layout';
 import { Button, Badge } from '@/components/ui';
-import { mockProjects } from '@/lib/mockData';
+import { mockLegacyProjects } from '@/lib/mockData';
 import { formatDate } from '@/lib/utils';
 import {
   Plus,
@@ -16,8 +16,8 @@ import {
 
 export default function Home() {
   // ダッシュボード用の統計データを計算
-  const totalProjects = mockProjects.length;
-  const statusCounts = mockProjects.reduce(
+  const totalProjects = mockLegacyProjects.length;
+  const statusCounts = mockLegacyProjects.reduce(
     (acc, project) => {
       acc[project.status] = (acc[project.status] || 0) + 1;
       return acc;
@@ -26,7 +26,7 @@ export default function Home() {
   );
 
   // 最近のプロジェクト（更新日順）
-  const recentProjects = [...mockProjects]
+  const recentProjects = [...mockLegacyProjects]
     .sort(
       (a, b) =>
         new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime(),

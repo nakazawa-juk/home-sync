@@ -6,15 +6,15 @@ Supabase データベースとの連携実装
 
 ## 実装範囲
 
-- [ ] Supabase セットアップ
-  - [ ] プロジェクト作成
-  - [ ] データベーススキーマ作成
-  - [ ] テーブル作成（projects, project_schedules, schedule_items）
-  - [ ] RLS（Row Level Security）設定
-- [ ] Next.js 側実装
-  - [ ] Supabase クライアント設定
-  - [ ] Server Actions実装
-  - [ ] データ取得・更新ロジック
+- [x] Supabase セットアップ
+  - [x] プロジェクト作成
+  - [x] データベーススキーマ作成
+  - [x] テーブル作成（projects, project_schedules, schedule_items）
+  - [x] RLS（Row Level Security）設定（設計要件により不要と判断）
+- [x] Next.js 側実装
+  - [x] Supabase クライアント設定
+  - [x] Server Actions実装
+  - [x] データ取得・更新ロジック
   - [ ] 認証機能（基本）
 - [ ] Python FastAPI 側実装
   - [ ] Supabase Python クライアント設定

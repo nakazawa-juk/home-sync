@@ -36,7 +36,9 @@ export function getStatusBadgeColor(status: string): string {
   }
 }
 
-export function calculateProgress(scheduleItems: { status: string }[]): number {
+export function calculateProgress(
+  scheduleItems: { status?: string }[],
+): number {
   if (scheduleItems.length === 0) return 0;
 
   const completedItems = scheduleItems.filter((item) => item.status === '完了');

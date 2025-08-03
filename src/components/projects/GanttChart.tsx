@@ -1,11 +1,11 @@
 'use client';
 
 import { useMemo } from 'react';
-import { ProjectSchedule } from '@/lib/types';
+import { ProjectSchedule, ScheduleItem } from '@/lib/types';
 import { getStatusBadgeColor } from '@/lib/utils';
 
 interface GanttChartProps {
-  schedule: ProjectSchedule;
+  schedule: ProjectSchedule & { schedule_items: ScheduleItem[] };
 }
 
 export function GanttChart({ schedule }: GanttChartProps) {

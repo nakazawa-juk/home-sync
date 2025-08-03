@@ -1,39 +1,75 @@
+// Database types (following CLAUDE.md schema)
 export interface Project {
   id: string;
-  project_number: string;
+  project_number: number;
   project_name: string;
-  construction_location: string;
-  construction_company: string;
-  status: ProjectStatus;
+  construction_location?: string;
+  construction_company?: string;
   created_at: string;
   updated_at: string;
 }
 
-export type ProjectStatus = '未着手' | '進行中' | '完了' | '遅延' | '中断';
+export type ScheduleStatus = '未着手' | '進行中' | '完了' | '遅延' | '中断';
 
-export interface ScheduleItem {
-  id: string;
-  process_name: string;
-  planned_start_date: string;
-  planned_end_date: string;
-  actual_start_date?: string;
-  actual_end_date?: string;
-  status: ProjectStatus;
-  assignee?: string;
-  remarks?: string;
-  order_index: number;
-}
+// 後方互換性のため（既存コンポーネントで使用）
+export type ProjectStatus = ScheduleStatus;
 
 export interface ProjectSchedule {
   id: string;
   project_id: string;
   version: number;
-  schedule_items: ScheduleItem[];
   created_at: string;
 }
 
+export interface ScheduleItem {
+  id: string;
+  schedule_id: string;
+  process_name: string;
+  planned_start_date?: string;
+  planned_end_date?: string;
+  actual_start_date?: string;
+  actual_end_date?: string;
+  status?: ScheduleStatus;
+  assignee?: string;
+  remarks?: string;
+  order_index: number;
+}
+
+// Extended types for UI
+export interface ProjectWithSchedule extends Project {
+  latest_schedule?: ProjectSchedule & {
+    schedule_items: ScheduleItem[];
+  };
+}
+
+// Insert/Update types
+export interface ProjectCreateData {
+  project_name: string;
+  construction_location?: string;
+  construction_company?: string;
+}
+
+export interface ProjectUpdateData {
+  project_name?: string;
+  construction_location?: string;
+  construction_company?: string;
+}
+
+export interface ScheduleItemUpdateData {
+  process_name?: string;
+  planned_start_date?: string;
+  planned_end_date?: string;
+  actual_start_date?: string;
+  actual_end_date?: string;
+  status?: ScheduleStatus;
+  assignee?: string;
+  remarks?: string;
+  order_index?: number;
+}
+
+// UI Filter and Sort types
 export interface FilterOptions {
-  status?: ProjectStatus[];
+  status?: ScheduleStatus[];
   company?: string;
   location?: string;
   dateRange?: {

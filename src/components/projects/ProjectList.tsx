@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Eye, Edit, Download } from 'lucide-react';
-import { Project } from '@/lib/types';
+import { ProjectWithSchedule, ScheduleStatus } from '@/lib/types';
 import { formatDate } from '@/lib/utils';
 import {
   Table,
@@ -16,7 +16,35 @@ import {
 } from '@/components/ui';
 
 interface ProjectListProps {
-  projects: Project[];
+  projects: ProjectWithSchedule[];
+}
+
+// プロジェクトの全体ステータスを工程表から計算
+function getProjectStatus(project: ProjectWithSchedule): ScheduleStatus {
+  if (
+    !project.latest_schedule?.schedule_items ||
+    project.latest_schedule.schedule_items.length === 0
+  ) {
+    return '未着手';
+  }
+
+  const items = project.latest_schedule.schedule_items;
+  const statusCounts = items.reduce(
+    (acc, item) => {
+      const status = item.status || '未着手';
+      acc[status] = (acc[status] || 0) + 1;
+      return acc;
+    },
+    {} as Record<ScheduleStatus, number>,
+  );
+
+  // 優先順位: 遅延 > 中断 > 進行中 > 完了 > 未着手
+  if (statusCounts['遅延'] > 0) return '遅延';
+  if (statusCounts['中断'] > 0) return '中断';
+  if (statusCounts['進行中'] > 0) return '進行中';
+  if (statusCounts['完了'] === items.length) return '完了';
+
+  return '進行中'; // 一部完了している場合
 }
 
 export function ProjectList({ projects }: ProjectListProps) {
@@ -79,7 +107,7 @@ export function ProjectList({ projects }: ProjectListProps) {
                 </div>
               </TableCell>
               <TableCell>
-                <Badge variant="status" status={project.status} />
+                <Badge variant="status" status={getProjectStatus(project)} />
               </TableCell>
               <TableCell className="hidden sm:table-cell text-sm text-gray-500">
                 {formatDate(project.updated_at)}
