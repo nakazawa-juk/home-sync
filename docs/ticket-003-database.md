@@ -15,6 +15,7 @@ Supabase データベースとの連携実装
   - [x] Supabase クライアント設定
   - [x] Server Actions実装
   - [x] データ取得・更新ロジック
+  - [ ] DBデータと繋ぎ込みしていない、モックデータを未だ使用している画面を洗い出し、DBデータを使うようにする。
   - [ ] 認証機能（基本）
 - [ ] Python FastAPI 側実装
   - [ ] Supabase Python クライアント設定
