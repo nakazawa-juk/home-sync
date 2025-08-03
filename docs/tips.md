@@ -120,6 +120,16 @@ curl -X GET \
 # → Supabase Dashboard > Authentication > Settings
 ```
 
+### MCP環境変数
+
+`.mcp.json`の環境変数は`~/.zshrc`を参照（`.env`や`.env.local`は無効）
+
+```bash
+# ~/.zshrc に追加
+export SUPABASE_ACCESS_TOKEN="your_token"
+export GITHUB_PERSONAL_ACCESS_TOKEN="your_token"
+```
+
 ## 📚 ドキュメント更新
 
 ### 新機能追加時
