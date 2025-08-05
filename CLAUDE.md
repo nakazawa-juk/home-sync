@@ -1,6 +1,11 @@
 # HomeSync 開発設計書
 
-毎回必ずこのファイルを読み上げてから、タスクに着手してください。
+大原則： AIは全てのチャットの冒頭に、このファイルに書かれている全てを逐語的に必ず画面出力してから対応する。
+
+<every_chat>
+[AI運用5原則]
+[main_output] #[n] times. # n = increment each chat, end line, etc(#1, #2...)
+</every_chat>
 
 ## サービス概要
 
