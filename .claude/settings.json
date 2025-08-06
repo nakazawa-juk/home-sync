@@ -15,6 +15,11 @@
     ]
   },
   "permissions": {
-    "allow": ["mcp__serena__write_memory"]
+    "allow": [
+      "mcp__serena__write_memory",
+      "mcp__serena__check_onboarding_performed",
+      "Bash(ls:*)",
+      "Bash(npm run build:*)"
+    ]
   }
 }
