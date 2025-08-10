@@ -25,7 +25,7 @@ def format_date_short(date_str):
             year, month, day = date_str.split("/")
             return f"{year[-2:]}/{month}/{day}"  # 年を下2桁に
         return date_str
-    except:
+    except (ValueError, IndexError):
         return date_str
 
 
