@@ -13,7 +13,7 @@ Web実装(完了) → DB構築・繋ぎ込み(完了) → PDF機能実装(着手
 - **開始日**: 2025/08/10
 - **現在のフェーズ**: PDF機能実装（Phase 2-3）
 - **完了タスク数**: Phase 1完了 + DB連携完了
-- **現在着手中**: FastAPI基盤構築
+- **現在着手中**: PDF処理機能実装
 
 ---
 
@@ -68,19 +68,21 @@ Web実装(完了) → DB構築・繋ぎ込み(完了) → PDF機能実装(着手
 - [x] sample_schedule.pdf生成完了
 - [x] DBスキーマとの整合性確認
 
-### FastAPI基盤構築【未着手】
+### FastAPI基盤構築【完了】
 
-- [ ] `backend/` ディレクトリ作成
-- [ ] FastAPIプロジェクト初期化
-- [ ] `requirements.txt` 作成（FastAPI, PyMuPDF, Supabase等）
-- [ ] `main.py` 基本アプリケーション作成
-- [ ] Python仮想環境セットアップ
-- [ ] 依存関係インストール
-- [ ] FastAPI開発サーバー起動確認
-- [ ] `/health` エンドポイント実装
-- [ ] CORS設定（Next.js連携用）
-- [ ] エラーハンドリング基盤
-- [ ] ログ設定
+- [x] `backend/` ディレクトリ作成
+- [x] FastAPIプロジェクト初期化
+- [x] `requirements.txt` 作成（FastAPI, PyMuPDF, Supabase等）
+- [x] `main.py` 基本アプリケーション作成
+- [x] `config.py` 設定管理実装
+- [x] `database.py` Supabase接続設定
+- [x] `pyproject.toml` プロジェクト設定作成
+- [x] `.env.example` 環境変数テンプレート作成
+- [x] `/health` エンドポイント実装
+- [x] CORS設定（Next.js連携用）
+- [x] エラーハンドリング基盤
+- [x] ログ設定
+- [x] Dockerfile作成
 
 ---
 
@@ -222,9 +224,9 @@ Web実装(完了) → DB構築・繋ぎ込み(完了) → PDF機能実装(着手
 
 ### 現在の状況
 
-- **完了**: Web UI全実装、DB構築、Web-DB連携
-- **着手中**: PDF機能（サンプルPDF作成済み、API基盤は未着手）
-- **未着手**: FastAPIサーバー基盤、PDF解析・生成API、Web-PDF連携
+- **完了**: Web UI全実装、DB構築、Web-DB連携、FastAPI基盤構築
+- **着手中**: PDF処理機能実装
+- **未着手**: PDF解析・生成API、Web-PDF連携
 
 ### 技術的課題
 

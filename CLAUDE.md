@@ -937,9 +937,31 @@ python-dotenv==1.0.0
 
 ## 15. 開発時コマンド
 
+### 15.0 ルートディレクトリから（推奨）
+
+```bash
+# フロントエンド開発サーバー起動
+npm run frontend:dev
+
+# バックエンド開発サーバー起動
+npm run backend:dev
+
+# 全フォーマット実行
+npm run format
+
+# Pythonフォーマット実行
+npm run python:format
+
+# 全依存関係インストール
+npm run install:all
+```
+
 ### 15.1 フロントエンド（Next.js）
 
 ```bash
+# frontend/ディレクトリに移動
+cd frontend/
+
 # 開発サーバー起動
 npm run dev
 
@@ -962,6 +984,9 @@ npm run format:check
 ### 15.2 バックエンド（Python/FastAPI）
 
 ```bash
+# backend/ディレクトリに移動
+cd backend/
+
 # 仮想環境作成・有効化
 python -m venv venv
 source venv/bin/activate  # Linux/Mac
