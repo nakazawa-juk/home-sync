@@ -9,7 +9,12 @@
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "python:install": "pip install -r requirements-dev.txt",
+    "python:format": "ruff format . && isort .",
+    "python:lint": "ruff check .",
+    "python:check": "mypy .",
+    "python:test": "pytest"
   },
   "dependencies": {
     "@supabase/ssr": "^0.6.1",

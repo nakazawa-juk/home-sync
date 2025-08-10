@@ -1,0 +1,29 @@
+# Python開発環境用ライブラリ
+
+# コード品質管理
+black>=23.0.0          # 自動フォーマッタ
+ruff>=0.1.0           # 高速リンター・フォーマッタ
+isort>=5.12.0         # import文整理
+mypy>=1.5.0           # 静的型チェック
+
+# FastAPI開発用（Phase 2で使用）
+fastapi>=0.104.0      # Webフレームワーク
+uvicorn[standard]>=0.24.0  # ASGIサーバー
+python-multipart>=0.0.6    # ファイルアップロード対応
+python-dotenv>=1.0.0  # 環境変数管理
+
+# PDF処理（既に使用中）
+PyMuPDF>=1.23.0       # PDF処理ライブラリ
+
+# データベース・API
+supabase>=2.0.0       # Supabaseクライアント
+pydantic>=2.0.0       # データバリデーション
+
+# 開発・テスト用
+pytest>=7.4.0        # テストフレームワーク
+pytest-asyncio>=0.21.0  # 非同期テスト対応
+httpx>=0.25.0         # HTTPクライアント（テスト用）
+
+# ドキュメント生成
+sphinx>=7.1.0         # ドキュメント生成（将来用）
+sphinx-rtd-theme>=1.3.0  # RTDテーマ
