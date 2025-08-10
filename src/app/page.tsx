@@ -1,10 +1,8 @@
-'use client';
-
 import Link from 'next/link';
 import { Layout } from '@/components/layout';
 import { Button, Badge } from '@/components/ui';
-import { mockLegacyProjects } from '@/lib/mockData';
 import { formatDate } from '@/lib/utils';
+import { getDashboardData } from '@/app/actions/dashboard';
 import {
   Plus,
   Upload,
@@ -14,24 +12,9 @@ import {
   CheckCircle,
 } from 'lucide-react';
 
-export default function Home() {
-  // ダッシュボード用の統計データを計算
-  const totalProjects = mockLegacyProjects.length;
-  const statusCounts = mockLegacyProjects.reduce(
-    (acc, project) => {
-      acc[project.status] = (acc[project.status] || 0) + 1;
-      return acc;
-    },
-    {} as Record<string, number>,
-  );
-
-  // 最近のプロジェクト（更新日順）
-  const recentProjects = [...mockLegacyProjects]
-    .sort(
-      (a, b) =>
-        new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime(),
-    )
-    .slice(0, 5);
+export default async function Home() {
+  // Supabaseからダッシュボードデータを取得
+  const { stats, recentProjects } = await getDashboardData();
 
   return (
     <Layout title="ダッシュボード" subtitle="プロジェクトの概要と進捗状況">
@@ -46,7 +29,7 @@ export default function Home() {
                   総プロジェクト数
                 </p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {totalProjects}
+                  {stats.total}
                 </p>
               </div>
             </div>
@@ -58,7 +41,7 @@ export default function Home() {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-500">進行中</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {statusCounts['進行中'] || 0}
+                  {stats.inProgress}
                 </p>
               </div>
             </div>
@@ -70,7 +53,7 @@ export default function Home() {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-500">完了</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {statusCounts['完了'] || 0}
+                  {stats.completed}
                 </p>
               </div>
             </div>
@@ -82,7 +65,7 @@ export default function Home() {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-500">遅延・中断</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {(statusCounts['遅延'] || 0) + (statusCounts['中断'] || 0)}
+                  {stats.delayed}
                 </p>
               </div>
             </div>
@@ -165,13 +148,22 @@ export default function Home() {
           <h3 className="text-lg font-medium text-gray-900 mb-4">
             ステータス別概要
           </h3>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-            {['未着手', '進行中', '完了', '遅延', '中断'].map((status) => {
-              const count = statusCounts[status] || 0;
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              {
+                status: '未着手',
+                count:
+                  stats.total -
+                  stats.inProgress -
+                  stats.completed -
+                  stats.delayed,
+              },
+              { status: '進行中', count: stats.inProgress },
+              { status: '完了', count: stats.completed },
+              { status: '遅延', count: stats.delayed },
+            ].map(({ status, count }) => {
               const percentage =
-                totalProjects > 0
-                  ? Math.round((count / totalProjects) * 100)
-                  : 0;
+                stats.total > 0 ? Math.round((count / stats.total) * 100) : 0;
               return (
                 <div key={status} className="text-center">
                   <div className="text-2xl font-bold text-gray-900">
