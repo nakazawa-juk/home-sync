@@ -19,18 +19,19 @@
       ]
     },
     "serena": {
-      "type": "stdio",
-      "command": "uvx",
+      "command": "uv",
       "args": [
-        "--from",
-        "git+https://github.com/oraios/serena",
-        "serena-mcp-server",
+        "run",
+        "--directory",
+        "/Users/naka/Projects/serena",
+        "serena",
+        "start-mcp-server",
         "--context",
         "ide-assistant",
         "--project",
-        "/Users/naka/Projects/Personal/home-sync"
+        "."
       ],
-      "env": {}
+      "cwd": "."
     },
     "supabase": {
       "type": "stdio",
