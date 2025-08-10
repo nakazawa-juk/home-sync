@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Layout } from '@/components/layout';
 import { Button, Badge } from '@/components/ui';
 import { formatDate } from '@/lib/utils';
-import { getDashboardData } from '@/app/actions/dashboard';
+import { getDashboardData } from '@/lib/services/dashboardService';
 import {
   Plus,
   Upload,
