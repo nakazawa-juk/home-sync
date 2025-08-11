@@ -6,6 +6,7 @@ from datetime import datetime
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.api.v1.projects import router as projects_router
 from app.config import settings
 from app.database import init_database
 
@@ -95,6 +96,10 @@ async def root() -> dict[str, str]:
         "docs": "/docs",
         "health": "/health",
     }
+
+
+# APIルーターの登録
+app.include_router(projects_router)
 
 
 if __name__ == "__main__":
