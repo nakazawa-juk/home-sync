@@ -165,8 +165,7 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```env
 # === Supabase 設定 ===
 SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+SUPABASE_SERVICE_ROLE_KEY=sb_secret_xxx...
 
 # === データベース 設定 ===
 DATABASE_URL=postgresql://user:password@localhost/dbname
@@ -194,7 +193,7 @@ PDF_TEMP_PATH=/tmp/uploaded_pdfs
 | 変数名                      | 説明                                     | 例                           |
 | --------------------------- | ---------------------------------------- | ---------------------------- |
 | `SUPABASE_URL`              | Supabase プロジェクト URL                | `https://abc123.supabase.co` |
-| `SUPABASE_SERVICE_ROLE_KEY` | サービスロールキー（管理者権限）         | JWT 形式の文字列             |
+| `SUPABASE_SERVICE_ROLE_KEY` | サービスロールキー（管理者権限）         | `sb_secret_xxx...`           |
 | `DEBUG`                     | デバッグモード（開発時は true）          | `true` / `false`             |
 | `ALLOWED_ORIGINS`           | CORS 許可オリジン（カンマ区切り）        | `http://localhost:3000`      |
 | `MAX_FILE_SIZE`             | アップロードファイル最大サイズ（バイト） | `10485760` (10MB)            |
@@ -406,7 +405,7 @@ def sample_pdf():
 
 ```env
 SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+SUPABASE_SERVICE_ROLE_KEY=sb_secret_xxx...
 ALLOWED_ORIGINS=https://your-frontend.vercel.app
 ENVIRONMENT=production
 DEBUG=false
