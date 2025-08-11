@@ -625,7 +625,6 @@ backend/
 │   ├── utils/ (ユーティリティ関数)
 │   └── tests/
 ├── alembic/ (マイグレーション)
-├── requirements.txt
 ├── pyproject.toml
 └── Dockerfile
 ```
@@ -861,8 +860,8 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY pyproject.toml .
+RUN pip install -e ".[dev]"
 
 COPY . .
 
@@ -872,13 +871,8 @@ CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 ```
 
 ```txt
-# requirements.txt
-fastapi==0.104.1
-uvicorn[standard]==0.24.0
-PyMuPDF==1.23.14
-supabase==2.0.2
-python-multipart==0.0.6
-python-dotenv==1.0.0
+# pyproject.toml で依存関係管理
+# メイン依存関係とdev依存関係を分離
 ```
 
 ## 12. 非機能要件
@@ -992,8 +986,8 @@ python -m venv venv
 source venv/bin/activate  # Linux/Mac
 # venv\Scripts\activate   # Windows
 
-# 依存関係インストール
-pip install -r requirements.txt
+# 依存関係インストール（開発用含む）
+pip install -e ".[dev]"
 
 # 開発サーバー起動
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
@@ -1014,8 +1008,8 @@ ruff check --fix .
 # 型チェック
 mypy .
 
-# 依存関係ファイル生成
-pip freeze > requirements.txt
+# 依存関係確認
+pip list
 ```
 
 ## 16. アクセシビリティ・UI/UX原則

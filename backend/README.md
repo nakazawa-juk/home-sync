@@ -79,8 +79,7 @@ backend/
 │   ├── README.md          # PDF標準フォーマット仕様
 │   ├── generate_sample_pdf.py
 │   └── sample_schedule.pdf
-├── pyproject.toml         # Python プロジェクト設定
-├── requirements.txt       # 依存関係（固定バージョン）
+├── pyproject.toml         # Python プロジェクト設定・依存関係管理
 ├── Dockerfile            # コンテナイメージ定義
 └── README.md             # このファイル
 ```
@@ -132,10 +131,7 @@ venv\Scripts\activate
 ### 3. 依存関係インストール
 
 ```bash
-# 本番依存関係
-pip install -r requirements.txt
-
-# または開発依存関係も含めて（推奨）
+# 開発依存関係も含めてインストール（推奨）
 pip install -e ".[dev]"
 ```
 
@@ -250,19 +246,15 @@ pytest app/tests/test_main.py::test_health_check
 
 ```bash
 # === パッケージ追加 ===
-pip install package-name
-pip freeze > requirements.txt  # requirements.txt更新
-
-# === パッケージ削除 ===
-pip uninstall package-name
-pip freeze > requirements.txt  # requirements.txt更新
+# pyproject.toml の dependencies に追加してから
+pip install -e ".[dev]"   # 再インストール
 
 # === 仮想環境リセット ===
 deactivate                 # 仮想環境終了
 rm -rf venv               # 仮想環境削除
 python -m venv venv       # 再作成
 source venv/bin/activate  # 有効化
-pip install -r requirements.txt  # 再インストール
+pip install -e ".[dev]"   # 再インストール
 ```
 
 ## 📚 API仕様
@@ -449,7 +441,7 @@ docker run -p 8000:8000 --env-file .env homesync-pdf-service
 **解決策**:
 ```bash
 source venv/bin/activate
-pip install -r requirements.txt
+pip install -e ".[dev]"
 ```
 
 #### 2. `ImportError: cannot import name 'settings' from 'app.config'`
