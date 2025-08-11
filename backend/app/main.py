@@ -1,8 +1,9 @@
 import logging
+from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from datetime import datetime
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
@@ -17,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     """
     アプリケーションのライフサイクル管理
     """
@@ -48,7 +49,7 @@ app = FastAPI(
 # CORS設定
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.allowed_origins,
+    allow_origins=settings.origins_list,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
@@ -57,14 +58,14 @@ app.add_middleware(
 
 # エラーハンドラー
 @app.exception_handler(Exception)
-async def global_exception_handler(request, exc):
+async def global_exception_handler(request: Request, exc: Exception) -> HTTPException:
     logger.error(f"Unhandled exception: {exc}")
     return HTTPException(status_code=500, detail="Internal server error")
 
 
 # ヘルスチェックエンドポイント
 @app.get("/health")
-async def health_check():
+async def health_check() -> dict[str, str]:
     """
     ヘルスチェックエンドポイント
 
@@ -81,7 +82,7 @@ async def health_check():
 
 # ルートエンドポイント
 @app.get("/")
-async def root():
+async def root() -> dict[str, str]:
     """
     ルートエンドポイント
 

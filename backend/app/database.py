@@ -29,10 +29,10 @@ def get_supabase_client() -> Client:
 
 
 # グローバルクライアントインスタンス（依存性注入で使用）
-supabase_client: Client = None
+supabase_client: Client | None = None
 
 
-async def init_database():
+async def init_database() -> None:
     """
     データベース接続を初期化する
     """
