@@ -57,14 +57,16 @@ python -m venv venv
 source venv/bin/activate  # Mac/Linux
 venv\Scripts\activate     # Windows
 
-# 依存関係インストール
-pip install -r requirements.txt
+# 依存関係インストール（開発用含む）
+pip install -e ".[dev]"
 
 # 開発サーバー起動
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+# または
+make dev
 
-# 依存関係更新
-pip freeze > requirements.txt
+# 依存関係確認
+pip list
 ```
 
 ## 🔧 開発環境セットアップ
@@ -101,7 +103,7 @@ npx tsc --noEmit
 ```bash
 # モジュールが見つからない
 pip list  # インストール済み確認
-pip install -r requirements.txt
+pip install -e ".[dev]"  # 依存関係再インストール
 
 # ポート競合
 lsof -i :8000  # ポート使用確認

@@ -17,7 +17,7 @@
     "frontend:dev": "npm run dev --workspace=frontend",
     "frontend:build": "npm run build --workspace=frontend",
     "backend:dev": "cd backend && uvicorn app.main:app --reload --host 0.0.0.0 --port 8000",
-    "install:all": "npm install && cd backend && pip install -r requirements.txt"
+    "install:all": "npm install && cd backend && pip install -e \".[dev]\""
   },
   "keywords": ["homesync", "construction", "schedule", "pdf", "nextjs", "fastapi"],
   "author": "Jukiya Nakazawa",
