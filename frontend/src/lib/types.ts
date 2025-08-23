@@ -35,13 +35,6 @@ export interface ScheduleItem {
   order_index: number;
 }
 
-// Extended types for UI
-export interface ProjectWithSchedule extends Project {
-  latest_schedule?: ProjectSchedule & {
-    schedule_items: ScheduleItem[];
-  };
-}
-
 // Insert/Update types
 export interface ProjectCreateData {
   project_name: string;

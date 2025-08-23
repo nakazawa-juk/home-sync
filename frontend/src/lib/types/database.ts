@@ -1,3 +1,5 @@
+import { ScheduleStatus } from '../types';
+
 export type Json =
   | string
   | number
@@ -85,7 +87,7 @@ export type Database = {
           process_name: string;
           remarks: string | null;
           schedule_id: string | null;
-          status: string | null;
+          status: ScheduleStatus | null;
         };
         Insert: {
           actual_end_date?: string | null;
@@ -98,7 +100,7 @@ export type Database = {
           process_name: string;
           remarks?: string | null;
           schedule_id?: string | null;
-          status?: string | null;
+          status?: ScheduleStatus | null;
         };
         Update: {
           actual_end_date?: string | null;
@@ -111,7 +113,7 @@ export type Database = {
           process_name?: string;
           remarks?: string | null;
           schedule_id?: string | null;
-          status?: string | null;
+          status?: ScheduleStatus | null;
         };
         Relationships: [
           {

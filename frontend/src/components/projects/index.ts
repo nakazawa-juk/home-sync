@@ -3,3 +3,4 @@ export { ProjectFilters } from './ProjectFilters';
 export { ProjectOverview } from './ProjectOverview';
 export { ScheduleTable } from './ScheduleTable';
 export { GanttChart } from './GanttChart';
+export { PDFExportButton } from './PDFExportButton';

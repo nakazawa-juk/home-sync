@@ -12,12 +12,14 @@ import {
   ProjectOverview,
   ScheduleTable,
   GanttChart,
+  PDFExportButton,
 } from '@/components/projects';
 import { getProject } from '@/app/actions/projects';
 import { formatDate } from '@/lib/utils';
-import { ArrowLeft, Download, Edit } from 'lucide-react';
+import { ArrowLeft, Edit } from 'lucide-react';
 import Link from 'next/link';
-import { ScheduleStatus, ProjectWithSchedule, ScheduleItem } from '@/lib/types';
+import { ScheduleStatus, ScheduleItem } from '@/lib/types';
+import { ProjectWithSchedules } from '@/lib/services/projectService';
 
 interface ProjectDetailPageProps {
   params: Promise<{
@@ -26,15 +28,18 @@ interface ProjectDetailPageProps {
 }
 
 // プロジェクトの全体ステータスを工程表から計算
-function getProjectStatus(project: ProjectWithSchedule): ScheduleStatus {
+function getProjectStatus(project: ProjectWithSchedules): ScheduleStatus {
+  // 最新のスケジュール（配列の最初の要素）を取得
+  const latestSchedule = project.project_schedules?.[0];
+
   if (
-    !project.latest_schedule?.schedule_items ||
-    project.latest_schedule.schedule_items.length === 0
+    !latestSchedule?.schedule_items ||
+    latestSchedule.schedule_items.length === 0
   ) {
     return '未着手';
   }
 
-  const items = project.latest_schedule.schedule_items;
+  const items = latestSchedule.schedule_items;
   const statusCounts = items.reduce(
     (acc: Record<ScheduleStatus, number>, item: ScheduleItem) => {
       const status = item.status || '未着手';
@@ -112,10 +117,14 @@ async function ProjectDetailContainer({ projectId }: { projectId: string }) {
           </div>
 
           <div className="flex gap-3">
-            <Button variant="outline">
-              <Download className="h-4 w-4 mr-2" />
-              PDF出力
-            </Button>
+            {project.project_schedules?.[0] && (
+              <PDFExportButton
+                scheduleId={project.project_schedules[0].id}
+                projectName={project.project_name}
+                projectNumber={project.project_number}
+                disabled={!project.project_schedules[0].schedule_items?.length}
+              />
+            )}
             <Button>
               <Edit className="h-4 w-4 mr-2" />
               編集
@@ -134,13 +143,13 @@ async function ProjectDetailContainer({ projectId }: { projectId: string }) {
           <TabsContent value="overview" className="space-y-6">
             <ProjectOverview
               project={project}
-              schedule={project.latest_schedule}
+              schedule={project.project_schedules?.[0]}
             />
           </TabsContent>
 
           <TabsContent value="schedule" className="space-y-6">
-            {project.latest_schedule ? (
-              <ScheduleTable schedule={project.latest_schedule} />
+            {project.project_schedules?.[0] ? (
+              <ScheduleTable schedule={project.project_schedules[0]} />
             ) : (
               <div className="text-center py-12 bg-white rounded-lg shadow">
                 <p className="text-gray-500">工程表データがありません。</p>
@@ -150,8 +159,8 @@ async function ProjectDetailContainer({ projectId }: { projectId: string }) {
           </TabsContent>
 
           <TabsContent value="gantt" className="space-y-6">
-            {project.latest_schedule ? (
-              <GanttChart schedule={project.latest_schedule} />
+            {project.project_schedules?.[0] ? (
+              <GanttChart schedule={project.project_schedules[0]} />
             ) : (
               <div className="text-center py-12 bg-white rounded-lg shadow">
                 <p className="text-gray-500">
