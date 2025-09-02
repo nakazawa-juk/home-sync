@@ -64,6 +64,37 @@ class ScheduleNotFoundError(Exception):
     pass
 
 
+class PDFUploadRequest(BaseModel):
+    """PDFアップロードリクエスト"""
+
+    project_id: UUID = Field(..., description="プロジェクトID")
+
+
+class PDFUploadResponse(BaseModel):
+    """PDFアップロード・解析レスポンス"""
+
+    status: str = Field(default="success", description="アップロードステータス")
+    schedule_id: UUID = Field(..., description="作成された工程表ID")
+    version: int = Field(..., description="工程表バージョン")
+    items_count: int = Field(..., description="抽出された工程アイテム数")
+    project_name: str = Field(..., description="プロジェクト名")
+    uploaded_at: datetime = Field(
+        default_factory=datetime.now, description="アップロード日時"
+    )
+
+
+class PDFUploadError(Exception):
+    """PDFアップロード・解析エラー"""
+
+    pass
+
+
+class ProjectNotFoundError(Exception):
+    """プロジェクト未発見エラー"""
+
+    pass
+
+
 class PDFGenerationError(Exception):
     """PDF生成エラー"""
 

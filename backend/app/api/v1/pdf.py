@@ -6,14 +6,17 @@ PDF関連のAPIエンドポイント
 import logging
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Response
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Response, UploadFile
 from supabase import Client
 
 from app.database import get_db
 from app.schemas.pdf import (
     PDFGenerationError,
     PDFScheduleData,
+    PDFUploadError,
+    PDFUploadResponse,
     ProjectInfoForPDF,
+    ProjectNotFoundError,
     ScheduleItemForPDF,
     ScheduleNotFoundError,
 )
@@ -204,3 +207,96 @@ async def pdf_service_health() -> dict[str, str]:
     except Exception as e:
         logger.error(f"PDF service health check failed: {e}")
         raise HTTPException(status_code=503, detail="PDF service unavailable") from e
+
+
+@router.post("/upload-pdf")
+async def upload_pdf(
+    pdf: UploadFile = File(..., description="工程表PDFファイル"),
+    project_id: UUID = Form(..., description="プロジェクトID"),
+    db: Client = Depends(get_db),
+) -> PDFUploadResponse:
+    """
+    PDF工程表のアップロード・解析・データベース保存
+
+    Args:
+        pdf: アップロードされたPDFファイル
+        project_id: 対象プロジェクトのID
+        db: Supabaseクライアント（依存性注入）
+
+    Returns:
+        PDFUploadResponse: アップロード結果
+
+    Raises:
+        HTTPException:
+            - 400: ファイル形式が不正、またはPDF解析に失敗
+            - 404: プロジェクトが見つからない
+            - 413: ファイルサイズが制限を超過
+            - 500: サーバーエラー
+    """
+    try:
+        logger.info(f"PDF upload request: file={pdf.filename}, project_id={project_id}")
+
+        # ファイル形式チェック
+        if pdf.content_type != "application/pdf":
+            logger.warning(f"Invalid content type: {pdf.content_type}")
+            raise HTTPException(
+                status_code=400, detail="PDFファイルのみアップロード可能です"
+            )
+
+        # ファイルサイズチェック（10MB制限）
+        MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
+        if pdf.size and pdf.size > MAX_FILE_SIZE:
+            logger.warning(f"File size too large: {pdf.size} bytes")
+            raise HTTPException(
+                status_code=413,
+                detail=f"ファイルサイズが制限を超過しています（最大: {MAX_FILE_SIZE // 1024 // 1024}MB）",
+            )
+
+        # PDFファイル読み込み
+        try:
+            pdf_content = await pdf.read()
+        except Exception as e:
+            logger.error(f"Failed to read PDF file: {e}")
+            raise HTTPException(
+                status_code=400, detail="PDFファイルの読み込みに失敗しました"
+            ) from e
+
+        # PDF解析・データベース保存
+        schedule_data = await pdf_service.extract_schedule_from_pdf(
+            pdf_content, project_id, db
+        )
+
+        # レスポンス作成
+        response = PDFUploadResponse(
+            schedule_id=schedule_data.schedule_id,
+            version=schedule_data.version,
+            items_count=len(schedule_data.schedule_items),
+            project_name=schedule_data.project_info.project_name,
+        )
+
+        logger.info(
+            f"PDF upload completed successfully: "
+            f"schedule_id={schedule_data.schedule_id}, "
+            f"items={len(schedule_data.schedule_items)}, "
+            f"version={schedule_data.version}"
+        )
+
+        return response
+
+    except HTTPException:
+        # HTTPExceptionはそのまま再発生
+        raise
+
+    except ProjectNotFoundError as e:
+        logger.warning(f"Project not found for PDF upload: {e}")
+        raise HTTPException(status_code=404, detail=str(e)) from e
+
+    except PDFUploadError as e:
+        logger.error(f"PDF upload/analysis failed: {e}")
+        raise HTTPException(status_code=400, detail=str(e)) from e
+
+    except Exception as e:
+        logger.error(f"Unexpected error in PDF upload: {e}")
+        raise HTTPException(
+            status_code=500, detail="PDF処理中にサーバーエラーが発生しました"
+        ) from e
