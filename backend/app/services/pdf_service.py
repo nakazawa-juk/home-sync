@@ -505,7 +505,7 @@ class PDFGenerationService:
 
             # データベースに保存
             schedule_data = await self._save_schedule_to_db(
-                project_info, schedule_items, db
+                project_id, project_info, schedule_items, db
             )
 
             doc.close()
@@ -626,6 +626,7 @@ class PDFGenerationService:
 
     async def _save_schedule_to_db(
         self,
+        project_id: UUID,
         project_info: ProjectInfoForPDF,
         schedule_items: list[ScheduleItemForPDF],
         db: Client,
@@ -634,6 +635,7 @@ class PDFGenerationService:
         工程表データをデータベースに保存
 
         Args:
+            project_id: プロジェクトID（UUID）
             project_info: プロジェクト情報
             schedule_items: 工程アイテムリスト
             db: Supabaseクライアント
@@ -646,9 +648,7 @@ class PDFGenerationService:
             existing_result = (
                 db.table("project_schedules")
                 .select("version")
-                .eq(
-                    "project_id", str(project_info.project_number)
-                )  # project_numberを使用
+                .eq("project_id", str(project_id))  # 正しくproject_id（UUID）を使用
                 .order("version", desc=True)
                 .limit(1)
                 .execute()
@@ -663,9 +663,7 @@ class PDFGenerationService:
                 db.table("project_schedules")
                 .insert(
                     {
-                        "project_id": str(
-                            project_info.project_number
-                        ),  # project_numberを使用
+                        "project_id": str(project_id),  # 正しくproject_id（UUID）を使用
                         "version": next_version,
                     }
                 )
