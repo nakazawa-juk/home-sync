@@ -1,11 +1,11 @@
 import { Suspense } from 'react';
 import Link from 'next/link';
 import { Layout } from '@/components/layout';
-import { ProjectList } from '@/components/projects';
+import { ProjectList, PDFImportButton } from '@/components/projects';
 import { Button } from '@/components/ui';
-import { Plus, Upload } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { getProjects } from '@/app/actions/projects';
-import { ProjectWithSchedule } from '@/lib/types';
+import { ProjectWithSchedule, Project } from '@/lib/types';
 
 // プロジェクト一覧の取得とレンダリングを分離
 async function ProjectListContainer() {
@@ -35,6 +35,14 @@ async function ProjectListContainer() {
     })) || [];
 
   return <ProjectList projects={projectsWithSchedule} />;
+}
+
+// PDFインポートボタン用のプロジェクトデータ取得
+async function PDFImportContainer() {
+  const { data: projects } = await getProjects();
+  const projectList: Project[] = projects || [];
+
+  return <PDFImportButton projects={projectList} />;
 }
 
 // ローディング用のスケルトンコンポーネント
@@ -68,10 +76,15 @@ export default function ProjectsPage() {
             </h2>
           </div>
           <div className="flex gap-3">
-            <Button variant="outline">
-              <Upload className="h-4 w-4 mr-2" />
-              PDFインポート
-            </Button>
+            <Suspense
+              fallback={
+                <Button variant="outline" disabled>
+                  PDFインポート
+                </Button>
+              }
+            >
+              <PDFImportContainer />
+            </Suspense>
             <Link href="/projects/new">
               <Button>
                 <Plus className="h-4 w-4 mr-2" />

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui';
-import { Download, Loader2 } from 'lucide-react';
+import { Loader2, Upload } from 'lucide-react';
 import { exportAndDownloadPDF } from '@/lib/services/pdfService';
 
 interface PDFExportButtonProps {
@@ -54,7 +54,7 @@ export function PDFExportButton({
         {isExporting ? (
           <Loader2 className="h-4 w-4 mr-2 animate-spin" />
         ) : (
-          <Download className="h-4 w-4 mr-2" />
+          <Upload className="h-4 w-4 mr-2" />
         )}
         {isExporting ? 'PDF生成中...' : 'PDF出力'}
       </Button>
