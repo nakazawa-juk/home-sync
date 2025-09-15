@@ -13,8 +13,8 @@ RUN apt-get update && apt-get install -y \
 # pipを最新バージョンにアップグレード
 RUN pip install --no-cache-dir --upgrade pip
 
-# pyproject.tomlをコピー
-COPY pyproject.toml .
+# pyproject.tomlとREADME.mdをコピー
+COPY pyproject.toml README.md ./
 
 # 依存関係をインストール（本番用のみ）
 RUN pip install --no-cache-dir -e .
