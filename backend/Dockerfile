@@ -4,18 +4,20 @@ FROM python:3.11-slim
 # 作業ディレクトリを設定
 WORKDIR /app
 
-# システムの依存関係をインストール
+# システムの依存関係をインストール（PyMuPDF用）
 RUN apt-get update && apt-get install -y \
     build-essential \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Pythonの依存関係ファイルをコピー
-COPY requirements.txt .
+# pipを最新バージョンにアップグレード
+RUN pip install --no-cache-dir --upgrade pip
 
-# Pythonパッケージをインストール
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+# pyproject.tomlをコピー
+COPY pyproject.toml .
+
+# 依存関係をインストール（本番用のみ）
+RUN pip install --no-cache-dir -e .
 
 # アプリケーションのソースコードをコピー
 COPY ./app ./app
