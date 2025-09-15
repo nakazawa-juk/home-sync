@@ -1,6 +1,11 @@
 # HomeSync 開発設計書
 
-タスク実装時には、毎回必ずこのファイルを読み上げてから、タスクに着手してください。
+大原則： AIは全てのチャットの冒頭に、このファイルに書かれている全てを逐語的に必ず画面出力してから対応する。
+
+<every_chat>
+[AI運用5原則]
+[main_output] #[n] times. # n = increment each chat, end line, etc(#1, #2...)
+</every_chat>
 
 ## サービス概要
 
@@ -620,7 +625,6 @@ backend/
 │   ├── utils/ (ユーティリティ関数)
 │   └── tests/
 ├── alembic/ (マイグレーション)
-├── requirements.txt
 ├── pyproject.toml
 └── Dockerfile
 ```
@@ -856,8 +860,8 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY pyproject.toml .
+RUN pip install -e ".[dev]"
 
 COPY . .
 
@@ -867,13 +871,8 @@ CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 ```
 
 ```txt
-# requirements.txt
-fastapi==0.104.1
-uvicorn[standard]==0.24.0
-PyMuPDF==1.23.14
-supabase==2.0.2
-python-multipart==0.0.6
-python-dotenv==1.0.0
+# pyproject.toml で依存関係管理
+# メイン依存関係とdev依存関係を分離
 ```
 
 ## 12. 非機能要件
@@ -932,9 +931,31 @@ python-dotenv==1.0.0
 
 ## 15. 開発時コマンド
 
+### 15.0 ルートディレクトリから（推奨）
+
+```bash
+# フロントエンド開発サーバー起動
+npm run frontend:dev
+
+# バックエンド開発サーバー起動
+npm run backend:dev
+
+# 全フォーマット実行
+npm run format
+
+# Pythonフォーマット実行
+npm run python:format
+
+# 全依存関係インストール
+npm run install:all
+```
+
 ### 15.1 フロントエンド（Next.js）
 
 ```bash
+# frontend/ディレクトリに移動
+cd frontend/
+
 # 開発サーバー起動
 npm run dev
 
@@ -957,13 +978,16 @@ npm run format:check
 ### 15.2 バックエンド（Python/FastAPI）
 
 ```bash
+# backend/ディレクトリに移動
+cd backend/
+
 # 仮想環境作成・有効化
 python -m venv venv
 source venv/bin/activate  # Linux/Mac
 # venv\Scripts\activate   # Windows
 
-# 依存関係インストール
-pip install -r requirements.txt
+# 依存関係インストール（開発用含む）
+pip install -e ".[dev]"
 
 # 開発サーバー起動
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
@@ -984,8 +1008,8 @@ ruff check --fix .
 # 型チェック
 mypy .
 
-# 依存関係ファイル生成
-pip freeze > requirements.txt
+# 依存関係確認
+pip list
 ```
 
 ## 16. アクセシビリティ・UI/UX原則
@@ -1039,3 +1063,56 @@ pip freeze > requirements.txt
 **サービス名**: HomeSync
 
 このルールファイルを参照して、一貫性のある高品質な開発を行ってください。
+
+## 開発フロー
+
+### タスク管理
+
+- すべてのタスクは `/docs/todo.md` で一元管理
+- Todo管理：`- [ ]` (未完了) / `- [x]` (完了)
+
+### 開発優先順位
+
+1. **Phase 1**: Web UI実装（モックデータ使用）
+2. **Phase 2**: PDF処理サービス実装
+3. **Phase 3**: データベース連携実装
+
+### 実装方針
+
+- MVP（最小機能プロダクト）でまず動作するものを作成
+- モックデータで機能確認後、実際のAPI連携
+- タスク完了時は必ず/docs/todo.mdのチェックマークを更新
+
+### コミットメッセージルール
+
+- **プレフィックス必須**: `feat:`, `fix:`, `chore:`, `docs:`, `style:`, `refactor:`など
+- **本文**: 日本語で端的に記述（基本1行）
+- **複数変更時**: 可読性重視で複数行可
+
+**例**:
+
+```
+feat: プロジェクト一覧画面の実装
+fix: ガントチャート表示バグ修正
+chore: 依存関係更新とTailwind CSS設定
+docs: CLAUDE.mdにコミットルール追加
+```
+
+## Playwright MCP使用ルール
+
+### 絶対的な禁止事項
+
+1. **いかなる形式のコード実行も禁止**
+   - Python、JavaScript、Bash等でのブラウザ操作
+   - MCPツールを調査するためのコード実行
+   - subprocessやコマンド実行によるアプローチ
+
+2. **利用可能なのはMCPツールの直接呼び出しのみ**
+   - playwright:browser_navigate
+   - playwright:browser_screenshot
+   - 他のPlaywright MCPツール
+
+3. **エラー時は即座に報告**
+   - 回避策を探さない
+   - 代替手段を実行しない
+   - エラーメッセージをそのまま伝える

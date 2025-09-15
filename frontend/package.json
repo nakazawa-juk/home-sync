@@ -1,0 +1,47 @@
+{
+  "name": "nextjs-dev-template",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "python:install": "pip install -r requirements-dev.txt",
+    "python:format": "ruff format . && isort .",
+    "python:lint": "ruff check .",
+    "python:check": "mypy .",
+    "python:test": "pytest"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.6.1",
+    "@supabase/supabase-js": "^2.53.0",
+    "clsx": "^2.1.1",
+    "eslint-config-next": "^15.4.4",
+    "lucide-react": "^0.344.0",
+    "next": "^15.4.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwind-merge": "^3.3.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.9.1",
+    "@tailwindcss/postcss": "^4.1.11",
+    "@types/node": "24.1.0",
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.21",
+    "eslint": "^9.9.1",
+    "eslint-plugin-react-hooks": "^5.1.0-rc.0",
+    "eslint-plugin-react-refresh": "^0.4.11",
+    "globals": "^15.9.0",
+    "postcss": "^8.5.6",
+    "prettier": "^3.6.2",
+    "tailwindcss": "^4.1.11",
+    "typescript": "^5.5.3",
+    "typescript-eslint": "^8.3.0"
+  }
+}

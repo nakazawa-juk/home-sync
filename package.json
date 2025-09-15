@@ -1,38 +1,34 @@
 {
-  "name": "nextjs-dev-template",
+  "name": "homesync-monorepo",
+  "version": "1.0.0",
+  "description": "HomeSync - 建設工程管理システム",
   "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "workspaces": [
+    "frontend"
+  ],
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "dev": "npm run dev --workspace=frontend",
+    "build": "npm run build --workspace=frontend",
+    "format": "npm run format --workspace=frontend",
+    "lint": "npm run lint --workspace=frontend",
+    "python:format": "cd backend && python -m black . && python -m ruff check --fix .",
+    "python:lint": "cd backend && python -m ruff check .",
+    "python:typecheck": "cd backend && python -m mypy .",
+    "frontend:dev": "npm run dev --workspace=frontend",
+    "frontend:build": "npm run build --workspace=frontend",
+    "backend:dev": "cd backend && uvicorn app.main:app --reload --host 0.0.0.0 --port 8000",
+    "install:all": "npm install && cd backend && pip install -e \".[dev]\""
   },
-  "dependencies": {
-    "eslint-config-next": "^15.4.4",
-    "lucide-react": "^0.344.0",
-    "next": "^15.4.4",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+  "keywords": ["homesync", "construction", "schedule", "pdf", "nextjs", "fastapi"],
+  "author": "Jukiya Nakazawa",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
   },
-  "devDependencies": {
-    "@eslint/js": "^9.9.1",
-    "@tailwindcss/postcss": "^4.1.11",
-    "@types/node": "24.1.0",
-    "@types/react": "^18.3.5",
-    "@types/react-dom": "^18.3.0",
-    "autoprefixer": "^10.4.21",
-    "eslint": "^9.9.1",
-    "eslint-plugin-react-hooks": "^5.1.0-rc.0",
-    "eslint-plugin-react-refresh": "^0.4.11",
-    "globals": "^15.9.0",
-    "postcss": "^8.5.6",
-    "prettier": "^3.6.2",
-    "tailwindcss": "^4.1.11",
-    "typescript": "^5.5.3",
-    "typescript-eslint": "^8.3.0"
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/home-sync.git"
   }
 }
