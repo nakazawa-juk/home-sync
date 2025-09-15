@@ -60,6 +60,17 @@ export interface ScheduleItemUpdateData {
   order_index?: number;
 }
 
+// Composite types
+export interface ProjectWithSchedule extends Project {
+  project_schedules?: (ProjectSchedule & {
+    schedule_items?: ScheduleItem[];
+  })[];
+  latest_schedule?: ProjectSchedule & {
+    schedule_items?: ScheduleItem[];
+  };
+  status?: ScheduleStatus; // 計算される全体ステータス
+}
+
 // UI Filter and Sort types
 export interface FilterOptions {
   status?: ScheduleStatus[];
