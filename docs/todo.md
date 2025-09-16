@@ -239,10 +239,10 @@ Web実装(完了) → DB構築・繋ぎ込み(完了) → PDF機能実装(着手
 ### デプロイ計画
 
 - **Next.js**: Vercel（設定済み）
-- **FastAPI**: Railway or Render（未設定）
-- **Supabase**: 設定済み
+- **FastAPI**: Render（設定済み）
+- **Database**: Supabase（設定済み）
 
 ---
 
-**最終更新**: 2025/09/15
+**最終更新**: 2025/09/16
 **更新者**: Jukiya
