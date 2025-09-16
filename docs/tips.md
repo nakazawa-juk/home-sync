@@ -1,8 +1,8 @@
-# 開発Tips・備忘録
+# 開発 Tips・備忘録
 
-HomeSync開発時によく忘れがちな操作や設定の備忘録
+HomeSync 開発時によく忘れがちな操作や設定の備忘録
 
-## 🤖 AI開発ツール関連
+## 🤖 AI 開発ツール関連
 
 ### Serena MCP
 
@@ -49,7 +49,7 @@ npm run format
 npm run build
 ```
 
-### Python 環境（PDF Service用）
+### Python 環境（PDF Service 用）
 
 ```bash
 # 仮想環境作成・有効化
@@ -75,7 +75,7 @@ pip list
 
 ```bash
 # .env.local ファイル作成
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 PDF_SERVICE_URL=http://localhost:8000
@@ -83,7 +83,7 @@ PDF_SERVICE_URL=http://localhost:8000
 
 ## 🐛 よくあるエラーと対処法
 
-### Next.js関連
+### Next.js 関連
 
 ```bash
 # キャッシュクリア
@@ -98,7 +98,7 @@ npm install
 npx tsc --noEmit
 ```
 
-### Python関連
+### Python 関連
 
 ```bash
 # モジュールが見つからない
@@ -110,7 +110,7 @@ lsof -i :8000  # ポート使用確認
 kill -9 [PID]  # プロセス終了
 ```
 
-### Supabase関連
+### Supabase 関連
 
 ```bash
 # 接続テスト
@@ -122,7 +122,7 @@ curl -X GET \
 # → Supabase Dashboard > Authentication > Settings
 ```
 
-### MCP環境変数
+### MCP 環境変数
 
 `.mcp.json`の環境変数は`~/.zshrc`を参照（`.env`や`.env.local`は無効）
 
@@ -136,25 +136,25 @@ export GITHUB_PERSONAL_ACCESS_TOKEN="your_token"
 
 ### 新機能追加時
 
-- CLAUDE.md更新
+- CLAUDE.md 更新
 - docs/ にタスク追加
 - agents でタスク実行
 
 ## 🏗️ プロジェクト固有の注意点
 
-### HomeSync特有の設定
+### HomeSync 特有の設定
 
-- PDF処理は必ずFastAPIサービス経由
+- PDF 処理は必ず FastAPI サービス経由
 - 工程表データは必ずバージョン管理
-- 性能目標：PDF処理5秒以内、画面表示3秒以内
+- 性能目標：PDF 処理 5 秒以内、画面表示 3 秒以内
 
 ### 開発優先度
 
-1. Phase 1: PDF Import + Web表示
-2. Phase 2: Web編集 + PDF出力
+1. Phase 1: PDF Import + Web 表示
+2. Phase 2: Web 編集 + PDF 出力
 3. Phase 3: 新規作成 + 権限管理
 
 ---
 
 **更新日**: 2025-08-03  
-**注意**: 新しいTipsを発見したら随時このファイルに追加する
+**注意**: 新しい Tips を発見したら随時このファイルに追加する
