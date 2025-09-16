@@ -1,9 +1,9 @@
 # HomeSync 開発設計書
 
-大原則： AIは全てのチャットの冒頭に、このファイルに書かれている全てを逐語的に必ず画面出力してから対応する。
+大原則： AI は全てのチャットの冒頭に、このファイルに書かれている全てを逐語的に必ず画面出力してから対応する。
 
 <every_chat>
-[AI運用5原則]
+[AI 運用 5 原則]
 [main_output] #[n] times. # n = increment each chat, end line, etc(#1, #2...)
 </every_chat>
 
@@ -24,16 +24,16 @@
 ### 1.1 目的
 
 - **主目的**: 個人開発実績の構築と案件獲得のためのポートフォリオ作成
-- **副目的**: Pythonスキルのキャッチアップとアピール材料の作成
+- **副目的**: Python スキルのキャッチアップとアピール材料の作成
 
 ### 1.2 システム概要
 
-注文住宅会社が取引先建設会社との連携で使用する工程表を、PDFインポートからWeb管理、PDF出力まで一貫して管理できるシステム（HomeSync）
+注文住宅会社が取引先建設会社との連携で使用する工程表を、PDF インポートから Web 管理、PDF 出力まで一貫して管理できるシステム（HomeSync）
 
 ### 1.3 対象ユーザー
 
 - **業界**: 注文住宅業界（顧客：一般家族、取引先：建設現場）
-- **企業規模**: 従業員20-50名程度
+- **企業規模**: 従業員 20-50 名程度
 - **利用者**: 自社スタッフのみ（アクセス制御なし）
 
 ## 2. システムアーキテクチャ
@@ -63,8 +63,8 @@
 
 **役割分担**:
 
-- **Next.js**: 全UI + 通常のCRUD操作 + 認証
-- **FastAPI**: PDF処理専用サービス
+- **Next.js**: 全 UI + 通常の CRUD 操作 + 認証
+- **FastAPI**: PDF 処理専用サービス
 - **Supabase**: データベース + 認証基盤
 
 ### 2.2 技術スタック
@@ -77,7 +77,7 @@
 - **UI Library**: Tailwind CSS v4
 - **Database Client**: Supabase JavaScript Client (直接接続)
 - **Deploy**: Vercel
-- **役割**: UI/UX + 通常のCRUD操作 + 認証
+- **役割**: UI/UX + 通常の CRUD 操作 + 認証
 
 #### **PDF Service (専用マイクロサービス)**
 
@@ -86,7 +86,7 @@
 - **PDF Processing**: PyMuPDF (fitz) 1.23+
 - **Database Client**: Supabase Python Client
 - **Deploy**: Railway / Render
-- **役割**: PDF処理専用（アップロード解析・生成出力のみ）
+- **役割**: PDF 処理専用（アップロード解析・生成出力のみ）
 
 #### **Database**
 
@@ -105,14 +105,14 @@ User Action → React Component → Server Action → Supabase → Response
 
 ```typescript
 // app/actions/projects.ts
-"use server";
+'use server';
 
 export async function getProjects() {
   const supabase = createClient();
   const { data, error } = await supabase
-    .from("projects")
-    .select("*")
-    .order("created_at", { ascending: false });
+    .from('projects')
+    .select('*')
+    .order('created_at', { ascending: false });
 
   return { data, error };
 }
@@ -147,9 +147,9 @@ User Upload → Next.js Frontend → PDF Service (FastAPI) → Supabase → Resp
 
 **このパターンで処理される操作**:
 
-- PDFファイルのアップロード・解析
-- 工程表PDFの生成・出力
-- PDF関連の専門処理
+- PDF ファイルのアップロード・解析
+- 工程表 PDF の生成・出力
+- PDF 関連の専門処理
 
 ## 4. データベース設計
 
@@ -202,7 +202,7 @@ CREATE TABLE schedule_items (
 
 #### 4.2.1 基本情報
 
-- **プロジェクトID**: システム内部識別子（UUID）
+- **プロジェクト ID**: システム内部識別子（UUID）
 - **プロジェクト番号**: 画面表示用連番
 - **プロジェクト名**: 顧客名や案件名（例：「田中様邸新築工事」）
 - **工事場所**: 建設地住所
@@ -223,18 +223,18 @@ CREATE TABLE schedule_items (
 
 ### 5.1 必須機能（優先度：高）
 
-#### 5.1.1 PDFインポート機能
+#### 5.1.1 PDF インポート機能
 
-- **概要**: 工程表PDFファイルをアップロードし、データを自動抽出
-- **対象PDF**: 電子データのみ（手書きスキャン対象外）
+- **概要**: 工程表 PDF ファイルをアップロードし、データを自動抽出
+- **対象 PDF**: 電子データのみ（手書きスキャン対象外）
 - **形式**: 表形式のレイアウト
-- **制約**: 1PDF = 1工程表
+- **制約**: 1PDF = 1 工程表
 
 **処理フロー**:
 
-1. PDFファイルアップロード
-2. PyMuPDFによる表構造の自動検出・データ抽出
-3. プロジェクトID存在チェック
+1. PDF ファイルアップロード
+2. PyMuPDF による表構造の自動検出・データ抽出
+3. プロジェクト ID 存在チェック
 4. 新規/更新判定
 5. データベース保存
 
@@ -243,32 +243,32 @@ CREATE TABLE schedule_items (
 - **概要**: 抽出したデータをリレーショナルデータベースに構造化して保存
 - **履歴管理**: 更新時は新バージョンとして保存（過去履歴保持）
 
-#### 5.1.3 Web参照機能
+#### 5.1.3 Web 参照機能
 
 - **概要**: ブラウザ上でプロジェクト一覧・詳細を表示
 - **一覧機能**:
-  - 無限スクロール（初期20件、スクロール時追加20-30件ロード）
+  - 無限スクロール（初期 20 件、スクロール時追加 20-30 件ロード）
   - フィルタリング（日付、場所、会社名、担当者、進捗ステータス）
   - 並び替え機能
 - **詳細機能**: 個別プロジェクトの工程表表示
 
 ### 5.2 推奨機能（優先度：中）
 
-#### 5.2.1 Web更新機能
+#### 5.2.1 Web 更新機能
 
 - **概要**: ブラウザ上で工程表データを編集
 - **更新反映**: リアルタイムでデータベース更新
 
-#### 5.2.2 PDF出力機能
+#### 5.2.2 PDF 出力機能
 
-- **概要**: 更新されたデータからPyMuPDFを使用して新しいPDFを生成
+- **概要**: 更新されたデータから PyMuPDF を使用して新しい PDF を生成
 - **フォーマット**: システム固定フォーマット（インポート元に依存せず）
 - **活用**: 取引先との情報共有
 
 ### 5.3 将来機能（優先度：低）
 
 - 新規工程表作成機能
-- CSVエクスポート機能
+- CSV エクスポート機能
 - ユーザー権限管理
 - 取引先別アクセス制御
 
@@ -412,9 +412,9 @@ def extract_schedule_data(doc: fitz.Document) -> list:
     return schedule_items
 ```
 
-#### 6.2.1 PDF Service API設計
+#### 6.2.1 PDF Service API 設計
 
-PDF処理専用のAPIエンドポイント設計（データCRUD操作はNext.js Server Actionsで直接Supabaseアクセス）:
+PDF 処理専用の API エンドポイント設計（データ CRUD 操作は Next.js Server Actions で直接 Supabase アクセス）:
 
 ```python
 # PDF処理専用API（FastAPI）
@@ -459,10 +459,10 @@ app/
 
 ```typescript
 // components/schedules/ScheduleTable.tsx
-"use client";
+'use client';
 
-import { updateScheduleItem } from "@/app/actions/schedules";
-import { ScheduleItem } from "@/lib/types";
+import { updateScheduleItem } from '@/app/actions/schedules';
+import { ScheduleItem } from '@/lib/types';
 
 interface Props {
   scheduleItems: ScheduleItem[];
@@ -518,8 +518,8 @@ export function ScheduleTable({ scheduleItems, projectId }: Props) {
 
 1. **プロジェクト一覧画面**: メイン画面
 2. **プロジェクト詳細画面**: 工程表詳細表示・編集
-3. **PDFインポート画面**: ファイルアップロード
-4. **PDF出力画面**: エクスポート機能
+3. **PDF インポート画面**: ファイルアップロード
+4. **PDF 出力画面**: エクスポート機能
 
 ### 8.2 画面仕様
 
@@ -538,7 +538,7 @@ export function ScheduleTable({ scheduleItems, projectId }: Props) {
 - **機能**:
   - インライン編集
   - バージョン履歴表示
-  - PDF出力ボタン
+  - PDF 出力ボタン
 
 ## 9. フロントエンド開発ルール
 
@@ -556,21 +556,21 @@ export function ScheduleTable({ scheduleItems, projectId }: Props) {
 ### 9.2 コーディング原則
 
 - **可読性重視**: 明確な変数名・関数名
-- **型安全**: TypeScript活用、any型禁止
+- **型安全**: TypeScript 活用、any 型禁止
 - **パフォーマンス**: 不要な再レンダリング回避
-- **保守性**: 単一責任原則、DRY原則遵守
-- **セキュリティ**: XSS対策、適切なサニタイゼーション
+- **保守性**: 単一責任原則、DRY 原則遵守
+- **セキュリティ**: XSS 対策、適切なサニタイゼーション
 
 ### 9.3 スタイリング規約
 
 - **Tailwind CSS**: ユーティリティクラス活用
 - **レスポンシブ**: `sm:`, `md:`, `lg:` プレフィックス使用
 - **アニメーション**: `transition-*`, `hover:*` クラス活用
-- **カスタムCSS**: globals.cssでキーフレーム定義
+- **カスタム CSS**: globals.css でキーフレーム定義
 
 ### 9.4 パフォーマンス最適化
 
-#### React Server Componentsで最適化
+#### React Server Components で最適化
 
 ```typescript
 export default async function ProjectPage({
@@ -593,7 +593,7 @@ export default async function ProjectPage({
 }
 ```
 
-## 10. Python/FastAPIバックエンド開発ルール
+## 10. Python/FastAPI バックエンド開発ルール
 
 ### 10.1 技術スタック詳細
 
@@ -664,7 +664,7 @@ except PDFProcessingError as e:
     raise HTTPException(status_code=400, detail="PDFファイルを処理できませんでした")
 ```
 
-#### 3. Pydanticスキーマ設計
+#### 3. Pydantic スキーマ設計
 
 ```python
 from pydantic import BaseModel, Field, validator
@@ -844,7 +844,7 @@ def process_request(project_id: str):
   'installCommand': 'npm install',
   'env':
     {
-      'NEXT_PUBLIC_SUPABASE_URL': '@supabase_url',
+      'SUPABASE_URL': '@supabase_url',
       'NEXT_PUBLIC_SUPABASE_ANON_KEY': '@supabase_anon_key',
       'SUPABASE_SERVICE_ROLE_KEY': '@supabase_service_key',
       'PDF_SERVICE_URL': '@pdf_service_url',
@@ -879,30 +879,30 @@ CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 
 ### 12.1 性能要件
 
-- **レスポンス時間**: 画面表示3秒以内
-- **同時接続**: 10ユーザー程度
+- **レスポンス時間**: 画面表示 3 秒以内
+- **同時接続**: 10 ユーザー程度
 - **データ量**: プロジェクト数百件程度
-- **PDF処理性能**: PyMuPDFによる高速処理
+- **PDF 処理性能**: PyMuPDF による高速処理
 
 ### 12.2 セキュリティ要件
 
 - **認証**: 基本認証（初期段階）
-- **データ保護**: HTTPS通信
+- **データ保護**: HTTPS 通信
 - **アクセス制御**: 全ユーザー全データアクセス可
 
 ### 12.3 運用要件
 
-- **バックアップ**: Supabaseの自動バックアップ機能
+- **バックアップ**: Supabase の自動バックアップ機能
 - **メンテナンス**: 基本的にメンテナンスフリー
 
 ## 13. システム制約
 
 ### 13.1 技術制約
 
-- PDFフォーマットは固定（柔軟性なし）
+- PDF フォーマットは固定（柔軟性なし）
 - 手書き文字対応なし
-- 電子データPDFのみ対応
-- PyMuPDF の機能範囲内での PDF処理
+- 電子データ PDF のみ対応
+- PyMuPDF の機能範囲内での PDF 処理
 
 ### 13.2 運用制約
 
@@ -914,19 +914,19 @@ CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 
 ### 14.1 Phase 1（MVP）
 
-- PDFインポート機能（PyMuPDF使用）
+- PDF インポート機能（PyMuPDF 使用）
 - データベース保存機能
-- Web参照機能（Next.js + TypeScript）
+- Web 参照機能（Next.js + TypeScript）
 
 ### 14.2 Phase 2
 
-- Web更新機能
-- PDF出力機能（PyMuPDF使用）
+- Web 更新機能
+- PDF 出力機能（PyMuPDF 使用）
 
 ### 14.3 Phase 3（将来）
 
-- 新規作成機能（PyMuPDF使用）
-- CSVエクスポート
+- 新規作成機能（PyMuPDF 使用）
+- CSV エクスポート
 - 権限管理
 
 ## 15. 開発時コマンド
@@ -1012,19 +1012,19 @@ mypy .
 pip list
 ```
 
-## 16. アクセシビリティ・UI/UX原則
+## 16. アクセシビリティ・UI/UX 原則
 
-- **アクセシビリティ**: WCAG 2.1 AA準拠
+- **アクセシビリティ**: WCAG 2.1 AA 準拠
 - **パフォーマンス**: 軽量・高速表示
 - **直感性**: 分かりやすいナビゲーション
 - **一貫性**: 統一されたデザインシステム
-- **キーボード操作**: Tab遷移対応
-- **スクリーンリーダー**: ARIA属性適切設定
+- **キーボード操作**: Tab 遷移対応
+- **スクリーンリーダー**: ARIA 属性適切設定
 - **色覚**: カラーコントラスト確保
 
 ## 17. 想定する建設工程
 
-注文住宅の一般的な工程（3-6ヶ月）:
+注文住宅の一般的な工程（3-6 ヶ月）:
 
 1. 地盤調査・地縄張り
 2. 基礎工事
@@ -1035,29 +1035,29 @@ pip list
 
 ## 18. 運用シナリオ
 
-1. 取引先から受領した工程表PDFをHomeSyncにインポート
-2. 進捗に応じてWeb画面で状況更新（情報同期）
-3. 変更があった場合、更新した工程表をPDF出力
-4. 出力したPDFを取引先と共有（リアルタイム情報共有）
+1. 取引先から受領した工程表 PDF を HomeSync にインポート
+2. 進捗に応じて Web 画面で状況更新（情報同期）
+3. 変更があった場合、更新した工程表を PDF 出力
+4. 出力した PDF を取引先と共有（リアルタイム情報共有）
 
 ## 19. 成功指標
 
 ### 19.1 技術的成功指標
 
-- PDF解析精度: 95%以上（PyMuPDF使用）
+- PDF 解析精度: 95%以上（PyMuPDF 使用）
 - システム稼働率: 99%以上
 - レスポンス時間: 目標値内
-- PDF生成処理時間: 5秒以内
+- PDF 生成処理時間: 5 秒以内
 
 ### 19.2 ビジネス的成功指標
 
 - ポートフォリオとしての完成度
-- Pythonスキルの実証
+- Python スキルの実証
 - 案件獲得への貢献
 
 ---
 
-**作成日**: 2025年8月2日  
+**作成日**: 2025 年 8 月 2 日  
 **作成者**: Jukiya  
 **バージョン**: 2.1  
 **サービス名**: HomeSync
@@ -1069,24 +1069,24 @@ pip list
 ### タスク管理
 
 - すべてのタスクは `/docs/todo.md` で一元管理
-- Todo管理：`- [ ]` (未完了) / `- [x]` (完了)
+- Todo 管理：`- [ ]` (未完了) / `- [x]` (完了)
 
 ### 開発優先順位
 
-1. **Phase 1**: Web UI実装（モックデータ使用）
-2. **Phase 2**: PDF処理サービス実装
+1. **Phase 1**: Web UI 実装（モックデータ使用）
+2. **Phase 2**: PDF 処理サービス実装
 3. **Phase 3**: データベース連携実装
 
 ### 実装方針
 
 - MVP（最小機能プロダクト）でまず動作するものを作成
-- モックデータで機能確認後、実際のAPI連携
-- タスク完了時は必ず/docs/todo.mdのチェックマークを更新
+- モックデータで機能確認後、実際の API 連携
+- タスク完了時は必ず/docs/todo.md のチェックマークを更新
 
 ### コミットメッセージルール
 
 - **プレフィックス必須**: `feat:`, `fix:`, `chore:`, `docs:`, `style:`, `refactor:`など
-- **本文**: 日本語で端的に記述（基本1行）
+- **本文**: 日本語で端的に記述（基本 1 行）
 - **複数変更時**: 可読性重視で複数行可
 
 **例**:
@@ -1098,19 +1098,21 @@ chore: 依存関係更新とTailwind CSS設定
 docs: CLAUDE.mdにコミットルール追加
 ```
 
-## Playwright MCP使用ルール
+## Playwright MCP 使用ルール
 
 ### 絶対的な禁止事項
 
 1. **いかなる形式のコード実行も禁止**
-   - Python、JavaScript、Bash等でのブラウザ操作
-   - MCPツールを調査するためのコード実行
-   - subprocessやコマンド実行によるアプローチ
 
-2. **利用可能なのはMCPツールの直接呼び出しのみ**
+   - Python、JavaScript、Bash 等でのブラウザ操作
+   - MCP ツールを調査するためのコード実行
+   - subprocess やコマンド実行によるアプローチ
+
+2. **利用可能なのは MCP ツールの直接呼び出しのみ**
+
    - playwright:browser_navigate
    - playwright:browser_screenshot
-   - 他のPlaywright MCPツール
+   - 他の Playwright MCP ツール
 
 3. **エラー時は即座に報告**
    - 回避策を探さない
