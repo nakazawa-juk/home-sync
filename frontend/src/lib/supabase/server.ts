@@ -12,8 +12,8 @@ if (!supabaseUrl || !supabaseKey) {
 }
 
 export function createClient() {
-  // 開発用の簡単な実装
-  return createServerClient<Database>(supabaseUrl, supabaseKey, {
+  // 型引数を明示的に指定
+  return createServerClient<Database>(supabaseUrl!, supabaseKey!, {
     cookies: {
       get() {
         return undefined;

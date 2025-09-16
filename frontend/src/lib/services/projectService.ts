@@ -150,12 +150,15 @@ export async function createProject(
     throw new Error('プロジェクト名は必須です');
   }
 
+  // 型を明示的に指定
+  const insertData: Database['public']['Tables']['projects']['Insert'] = {
+    ...projectData,
+    project_name: projectData.project_name.trim(),
+  };
+
   const { data, error } = await supabase
     .from('projects')
-    .insert({
-      ...projectData,
-      project_name: projectData.project_name.trim(),
-    })
+    .insert(insertData)
     .select()
     .single();
 
